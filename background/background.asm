@@ -40,7 +40,7 @@ vblankwait2:
   BPL vblankwait2
 
 
-  LDA #%10000000
+  LDA #%00100000
   STA $2001
 
 Forever:
