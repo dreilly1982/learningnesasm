@@ -27,22 +27,22 @@ NMI:
   .include "nes.asm"
 
 MoveChar:
-  LDA buttons1
-  AND #BUTTON_UP
-  BEQ notUp
-  DEC $0200
-  DEC $0204
-  DEC $0208
-  DEC $020C
-notUp:
-  LDA buttons1
-  AND #BUTTON_DOWN
-  BEQ notDown
-  INC $0200
-  INC $0204
-  INC $0208
-  INC $020C
-notDown:
+;  LDA buttons1
+;  AND #BUTTON_UP
+;  BEQ notUp
+;  DEC $0200
+;  DEC $0204
+;  DEC $0208
+;  DEC $020C
+;notUp:
+;  LDA buttons1
+;  AND #BUTTON_DOWN
+;  BEQ notDown
+;  INC $0200
+;  INC $0204
+;  INC $0208
+;  INC $020C
+;notDown:
   LDA buttons1
   AND #BUTTON_LEFT
   BEQ notLeft
@@ -68,10 +68,10 @@ palette:
   .db $22,$16,$28,$18, $22,$02,$38,$3C, $22,$1C,$15,$14, $22,$02,$38,$3C
 
 sprites:
-  .db $80,$32,$00,$80
-  .db $80,$33,$00,$88
-  .db $88,$34,$00,$80
-  .db $88,$35,$00,$88
+  .db $BF,$32,$00,$70
+  .db $C7,$34,$00,$70
+  .db $BF,$33,$00,$78
+  .db $C7,$35,$00,$78
 
 background: .incbin "mario.nam"
 attribute: .incbin "mario.atr"
