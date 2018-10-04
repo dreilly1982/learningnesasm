@@ -4,14 +4,25 @@
   .inesmir 1
 
   .rsset $0000
+addrlo    .rs 1
+addrhigh  .rs 1
 buttons1  .rs 1
+buttons2  .rs 1
+
+JOYPAD1 = $4016
+JOYPAD2 = $4017
+
+BUTTON_A      = %10000000
+BUTTON_B      = %01000000
+BUTTON_SELECT = %00100000
+BUTTON_START  = %00010000
+BUTTON_UP     = %00001000
+BUTTON_DOWN   = %00000100
+BUTTON_LEFT   = %00000010
+BUTTON_RIGHT  = $00000001
 
   .bank 0
   .org $C000
-vblankwait:
-  BIT $2002
-  BPL vblankwait
-  RTS
 
 RESET:
   SEI
@@ -115,105 +126,6 @@ NMI:
   LDA #$02
   STA $4014
 
-LatchController:
-  LDA #$01
-  STA $4016
-  LDA #$00
-  STA $4016
-  
-  LDA $4016
-  LDA $4016
-  LDA $4016
-  LDA $4016
-
-ReadUp:
-  LDA $4016
-  AND #%00000001
-  BEQ ReadUpDone
-  LDA $0200
-  SEC
-  SBC #$01
-  STA $0200
-  LDA $0204
-  SEC
-  SBC #$01
-  STA $0204
-  LDA $0208
-  SEC
-  SBC #$01
-  STA $0208
-  LDA $020C
-  SEC
-  SBC #$01
-  STA $020C
-ReadUpDone:
-
-ReadDown:
-  LDA $4016
-  AND #%00000001
-  BEQ ReadDownDone
-  LDA $0200
-  CLC
-  ADC #$01
-  STA $0200
-  LDA $0204
-  CLC
-  ADC #$01
-  STA $0204
-  LDA $0208
-  CLC
-  ADC #$01
-  STA $0208
-  LDA $020C
-  CLC
-  ADC #$01
-  STA $020C
-ReadDownDone:
-
-ReadLeft:
-  LDA $4016
-  AND #%00000001
-  BEQ ReadLeftDone
-  LDA $0203
-  SEC
-  SBC #$01
-  STA $0203
-  LDA $0207
-  SEC
-  SBC #$01
-  STA $0207
-  LDA $020B
-  SEC
-  SBC #$01
-  STA $020B
-  LDA $020F
-  SEC
-  SBC #$01
-  STA $020F
-ReadLeftDone:
-
-ReadRight:
-  LDA $4016
-  AND #%00000001
-  BEQ ReadRightDone
-  LDA $0203
-  CLC
-  ADC #$01
-  STA $0203
-  LDA $0207
-  CLC
-  ADC #$01
-  STA $0207
-  LDA $020B
-  CLC
-  ADC #$01
-  STA $020B
-  LDA $020F
-  CLC
-  ADC #$01
-  STA $020F
-ReadRightDone:
-
   LDA #%10010000
   STA $2000
   LDA #%00011110
@@ -221,7 +133,67 @@ ReadRightDone:
   LDA #$00
   STA $2005
   STA $2005
+  JSR ReadPads
+  JSR MoveChar 
   RTI
+
+vblankwait:
+  BIT $2002
+  BPL vblankwait
+  RTS
+
+MoveChar:
+  LDA buttons1
+  AND #BUTTON_UP
+  BEQ notUp
+  DEC $0200
+  DEC $0204
+  DEC $0208
+  DEC $020C
+notUp:
+  LDA buttons1
+  AND #BUTTON_DOWN
+  BEQ notDown
+  INC $0200
+  INC $0204
+  INC $0208
+  INC $020C
+notDown:
+  LDA buttons1
+  AND #BUTTON_LEFT
+  BEQ notLeft
+  DEC $0203
+  DEC $0207
+  DEC $020B
+  DEC $020F
+notLeft:
+  LDA buttons1
+  AND #BUTTON_RIGHT
+  BEQ notRight
+  INC $0203
+  INC $0207
+  INC $020B
+  INC $020F
+notRight:
+  RTS
+
+ReadPads:
+  LDA #$01
+  STA JOYPAD1
+  STA buttons2
+  LSR A
+  STA JOYPAD1
+ReadPadsLoop:
+  LDA JOYPAD1
+  AND #$03
+  CMP #$01
+  ROL buttons1
+  LDA JOYPAD2
+  AND #$03
+  CMP #$01
+  ROL buttons2
+  BCC ReadPadsLoop
+  RTS
 
   .bank 1
   .org $E000
@@ -246,5 +218,3 @@ attribute: .incbin "mario.atr"
   .bank 2
   .org $0000
   .incbin "mario.chr"
-addrlo:  .db 0
-addrhigh: .db 0
