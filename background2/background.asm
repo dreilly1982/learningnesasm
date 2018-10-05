@@ -27,22 +27,6 @@ NMI:
   .include "nes.asm"
 
 MoveChar:
-;  LDA buttons1
-;  AND #BUTTON_UP
-;  BEQ notUp
-;  DEC $0200
-;  DEC $0204
-;  DEC $0208
-;  DEC $020C
-;notUp:
-;  LDA buttons1
-;  AND #BUTTON_DOWN
-;  BEQ notDown
-;  INC $0200
-;  INC $0204
-;  INC $0208
-;  INC $020C
-;notDown:
   LDA buttons1
   AND #BUTTON_LEFT
   BEQ notLeft
